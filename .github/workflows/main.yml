@@ -33,4 +33,4 @@ jobs:
         with:
           commit_user_name: ${{ env.CI_COMMIT_AUTHOR }}
           commit_message: ${{ env.CI_COMMIT_MESSAGE }}
-          file_pattern: *
+          file_pattern: '*'
