@@ -19,6 +19,11 @@ jobs:
           - d
           - e
     steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
       - name: Make changes
         run: echo "${{ matrix.stream }}" >> log.txt
 
