@@ -29,9 +29,23 @@ jobs:
         run: echo "$(date)" >> ${{ matrix.stream }}.txt
 
       - name: Pull latest commits
-        run: git pull --rebase --autostash
-
+        run: sleep $(shuf -i 1-5 -n 1) && git pull --rebase --autostash
       - name: Commit new changes
+        id: commit
+        uses: stefanzweifel/git-auto-commit-action@v4
+        continue-on-error: true
+        env:
+          CI_COMMIT_MESSAGE: "[skip ci] Commit change ${{ matrix.stream }}"
+          CI_COMMIT_AUTHOR: HyBB-8
+        with:
+          commit_user_name: ${{ env.CI_COMMIT_AUTHOR }}
+          commit_message: ${{ env.CI_COMMIT_MESSAGE }}
+          file_pattern: '*'
+      - name: Retry pull latest commits
+        if: steps.commit.outcome != 'success'
+        run: sleep $(shuf -i 1-5 -n 1) && git pull --rebase --autostash
+      - name: Retry commit new changes
+        if: steps.commit.outcome != 'success'
         uses: stefanzweifel/git-auto-commit-action@v4
         env:
           CI_COMMIT_MESSAGE: "[skip ci] Commit change ${{ matrix.stream }}"
